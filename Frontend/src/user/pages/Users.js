@@ -4,7 +4,7 @@ const Users = () => {
     const USERS = [{
         id: 'a1',
         name: 'Shobhit',
-        image: 'shorturl.at/crGOY',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-BXuuPs6Tn1LvK_W1ZsGgVjsv-1Y6FqSkUw&usqp=CAU',
         places: 3
     }];
     return <UsersList items = {USERS} />
