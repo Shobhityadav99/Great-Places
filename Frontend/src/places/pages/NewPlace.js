@@ -5,7 +5,7 @@ import './NewPlace.css';
 
 const Users = () => {
     return <form className="place-form">
-        <Input type="text" element="input" label="Title" />
+        <Input type="text" element="input" label="Title" validators={[]} errorText="Please enter a valid title" />
     </form>
 }
 
