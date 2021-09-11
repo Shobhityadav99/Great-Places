@@ -1,33 +1,39 @@
 const express = require('express');
 const { check } = require('express-validator');
 
-const placeControllers = require('../controllers/place-controller');
+const placesControllers = require('../controllers/places-controllers');
+
 const router = express.Router();
 
-router.get('/:pid', placeControllers.getplaceById);
+router.get('/:pid', placesControllers.getPlaceById);
 
-router.get('/users/:uid', placeControllers.getplacesByuserId);
+router.get('/user/:uid', placesControllers.getPlacesByUserId);
 
 router.post(
-    '/',
-    [
-        check('title')
-            .not()
-            .isEmpty(),
-        check('description')
-            .isLength({ min: 5 }),
-        check('address')
-            .notEmpty()
-    ], placeControllers.createPlace);
-
-router.patch('/:pid', [
+  '/',
+  [
     check('title')
-        .not()
-        .isEmpty(),
-    check('description')
-        .isLength({ min: 5 }),
-], placeControllers.updatePlaceById);
+      .not()
+      .isEmpty(),
+    check('description').isLength({ min: 5 }),
+    check('address')
+      .not()
+      .isEmpty()
+  ],
+  placesControllers.createPlace
+);
 
-router.delete('/:pid', placeControllers.deletePlaceById);
+router.patch(
+  '/:pid',
+  [
+    check('title')
+      .not()
+      .isEmpty(),
+    check('description').isLength({ min: 5 })
+  ],
+  placesControllers.updatePlace
+);
+
+router.delete('/:pid', placesControllers.deletePlace);
 
 module.exports = router;
