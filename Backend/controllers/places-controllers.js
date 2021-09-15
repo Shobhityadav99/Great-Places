@@ -109,7 +109,7 @@ const createPlace = async (req, res, next) => {
 const updatePlace = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    throw new HttpError('Invalid inputs passed, please check your data.', 422);
+    next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
   const { title, description } = req.body;
@@ -145,19 +145,19 @@ const updatePlace = async (req, res, next) => {
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
   let place;
-  try{
+  try {
     place = await Place.findById(placeId);
-  }catch (err) {
+  } catch (err) {
     const error = new HttpError(
       'Something went wrong,Could not delete place',
       500
     );
     return next(error);
   }
-  
-  try{
+
+  try {
     await place.remove();
-  }catch (err) {
+  } catch (err) {
     const error = new HttpError(
       'Something went wrong,Could not update place',
       500
