@@ -16,20 +16,21 @@ export const useHttpClient = () => {
                 signal: httpAbortCtrll.signal
             });
             const responseData = await response.json();
+            activeHttpRequests.current = activeHttpRequests.current.filter(reqCtrl !== httpAbortCtrll)
             if(!response.ok){
                 throw new Error(responseData.message);
             }
+            setisLoading(false);
             return responseData;
         } catch(err) {
             setError(err);
+            setisLoading(false);
+            throw err;
         }
-        setisLoading(false);
     },[]);
-
     const clearError = () => {
         setError(null);
     }
-
     useEffect(()=>{
         return () => {
             activeHttpRequests.current.forEach(abortCtrl => abortCtrl.abort());
