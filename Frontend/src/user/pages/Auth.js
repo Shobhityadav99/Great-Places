@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import Card from '../../shared/components/UIElements/Card';
 import Input from '../../shared/components/FormElements/Input';
@@ -11,14 +11,14 @@ import {
   VALIDATOR_REQUIRE
 } from '../../shared/util/validators';
 import { useForm } from '../../shared/hooks/form-hook';
-import './Auth.css';
-import { AuthContext } from '../../shared/context/auth-context';
 import { useHttpClient } from '../../shared/hooks/http-hook';
+import { AuthContext } from '../../shared/context/auth-context';
+import './Auth.css';
 
 const Auth = () => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const { isLoading, error, clearError, sendRequest } = useHttpClient();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -60,38 +60,39 @@ const Auth = () => {
 
   const authSubmitHandler = async event => {
     event.preventDefault();
+
     if (isLoginMode) {
       try {
-        await sendRequest(
+        const responseData = await sendRequest(
           'http://localhost:5000/api/users/login',
           'POST',
           JSON.stringify({
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
+            password: formState.inputs.password.value
           }),
           {
             'Content-Type': 'application/json'
           }
         );
-        auth.login();
-      } catch (err) {
-
-      }
+        auth.login(responseData.user.id);
+      } catch (err) {}
     } else {
       try {
-        await sendRequest('http://localhost:5000/api/users/signup',
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/users/signup',
           'POST',
           JSON.stringify({
             name: formState.inputs.name.value,
             email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }), {
-          'Content-Type': 'application/json'
-        });
-        auth.login();
-      } catch (err) {
+            password: formState.inputs.password.value
+          }),
+          {
+            'Content-Type': 'application/json'
+          }
+        );
 
-      }
+        auth.login(responseData.user.id);
+      } catch (err) {}
     }
   };
 

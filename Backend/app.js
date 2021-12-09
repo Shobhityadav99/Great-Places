@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 const HttpError = require('./models/http-error');
@@ -9,14 +10,18 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.use((req,res,next) => {
-  res.setHeader('Access-Control-Allow-Origin','*');
-  res.setHeader('Access-Control-Allow-Headers','*');
-  res.setHeader('Access-Control-Allow-Methods','*');
-  next();
-})
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
 
-app.use('/api/places', placesRoutes); // => /api/places...
+  next();
+});
+
+app.use('/api/places', placesRoutes);
 app.use('/api/users', usersRoutes);
 
 app.use((req, res, next) => {
@@ -28,14 +33,17 @@ app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
-  res.status(error.code || 500)
+  res.status(error.code || 500);
   res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
-mongoose.connect('mongodb+srv://shobhit:shobhit@cluster0.hl7ra.mongodb.net/mern')
-.then(() => {
-  app.listen(5000);
-}
-).catch(err => {
-  console.log(err);
-})
+mongoose
+  .connect(
+    `mongodb+srv://shobhit:shobhit@cluster0.hl7ra.mongodb.net/mern?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch(err => {
+    console.log(err);
+  });

@@ -1,22 +1,35 @@
-import React, { useCallback, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch
+} from 'react-router-dom';
+
 import Users from './user/pages/Users';
 import NewPlace from './places/pages/NewPlace';
-import MainNavigation from './shared/components/Navigation/MainNavigation';
 import UserPlaces from './places/pages/UserPlaces';
 import UpdatePlace from './places/pages/UpdatePlace';
 import Auth from './user/pages/Auth';
+import MainNavigation from './shared/components/Navigation/MainNavigation';
 import { AuthContext } from './shared/context/auth-context';
 
 const App = () => {
-  const [isLoggedIn, setisLoggedIn] = useState(false);
-  const login = useCallback(() => {
-    setisLoggedIn(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(false);
+
+  const login = useCallback(uid => {
+    setIsLoggedIn(true);
+    setUserId(uid);
   }, []);
+
   const logout = useCallback(() => {
-    setisLoggedIn(false);
+    setIsLoggedIn(false);
+    setUserId(null);
   }, []);
+
   let routes;
+
   if (isLoggedIn) {
     routes = (
       <Switch>
@@ -51,16 +64,22 @@ const App = () => {
       </Switch>
     );
   }
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: isLoggedIn,
+        userId: userId,
+        login: login,
+        logout: logout
+      }}
+    >
       <Router>
         <MainNavigation />
-        <main>
-            {routes}
-        </main>
+        <main>{routes}</main>
       </Router>
     </AuthContext.Provider>
   );
-}
+};
 
 export default App;
